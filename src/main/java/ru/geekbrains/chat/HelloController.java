@@ -1,5 +1,6 @@
 package ru.geekbrains.chat;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -18,12 +19,12 @@ public class HelloController {
     @FXML
     TextArea textArea;
     @FXML
-    Button buttonSend;
-    @FXML
-    Button buttonClear;
-    @FXML
     TextField textField;
+    @FXML
+    Button button;
 
+    @FXML
+    ListView<String> clientList;
     @FXML
     TextField loginField;
     @FXML
@@ -31,16 +32,21 @@ public class HelloController {
     @FXML
     Button enter;
     @FXML
+    Button register;
+
+    @FXML
     HBox upperPanel;
     @FXML
     HBox buttonPanel;
 
     Socket socket;
-    DataOutputStream out;
     DataInputStream in;
+    DataOutputStream out;
 
     String IP_ADDRESS = "localhost";
     int PORT = 8189;
+
+    String nickName = "";
 
     public void setActive(boolean isAuthorized) {
         this.isAuthorized = isAuthorized;
@@ -154,6 +160,23 @@ public class HelloController {
             loginField.clear();
             passwordField.clear();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void register(ActionEvent actionEvent) {
+        if(loginField.getText().isBlank()|| passwordField.getText().isBlank()){
+            textArea.appendText("Input Login/Password\n");
+            return;
+        }
+        if (socket == null|| socket.isClosed()){
+            connect();
+        }
+        try {
+            out.writeUTF("/reg"+loginField.getText()+" " + passwordField.getText());
+            loginField.clear();
+            passwordField.clear();
+        }catch (IOException e){
             e.printStackTrace();
         }
     }

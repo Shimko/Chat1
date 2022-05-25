@@ -35,6 +35,25 @@ public class AuthServer {
         return null;
     }
 
+    public static String registerUser(String login, String password) {
+
+        //String sql = String.format("insert into users (login, password, nickname) values ('%s', '%s', '%s');", login, password, login);
+        //statement.execute(sql);
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into users (login, password, nickname) values (?, ?, ?);");
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, login);
+            preparedStatement.execute();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return getNickByLoginPass(login, password);
+    }
+
     public static void disconnect(){
         try {
             connection.close();
